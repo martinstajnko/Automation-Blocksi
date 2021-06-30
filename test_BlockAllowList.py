@@ -37,6 +37,36 @@ def logInWithGoogle(email, password):
     sleep(5)
 
 
+def logInwithAStudent(email, password):
+    url = 'chrome://welcome/'
+    driver.get(url)
+    sleep(2)
+    driver.find_element_by_xpath(
+        '/html/body/welcome-app//cr-view-manager/landing-view//div/button').click()
+    sleep(1)
+    driver.find_element_by_xpath(
+        '/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[1]/div/div[1]/div/div[1]/input').send_keys(email)
+    sleep(1)
+    driver.find_element_by_xpath(
+        '/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button/span').click()
+    sleep(1)
+    driver.find_element_by_xpath(
+        '/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[1]/div[1]/div/div/div/div/div[1]/div/div[1]/input').send_keys(password)
+    sleep(1)
+    driver.find_element_by_xpath(
+        '/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button/span').click()
+    sleep(12)
+    try:
+        driver.find_element_by_xpath(
+            '/html/body/c-wiz[2]/c-wiz/div/div[1]/div/div/div/div[2]/div[3]/div/div[2]/div/span/span').click()
+    except NoSuchElementException:
+        print('No need to click on account security.')
+    sleep(3)
+    alert = driver.switch_to_alert()
+    alert.accept
+    sleep(3)
+
+
 def createNewBAList():
     # Navigate to BA List
     navigateToBAList()
@@ -535,7 +565,7 @@ def checkElementCreateListButton():
     assert message_success == 'Success!', f'Test failed.'
 
 
-def test_editBlockAllowListDeleteURL(test_setup):
+# def test_editBlockAllowListDeleteURL(test_setup):
     # change url from block to allow
     logInWithGoogle('mstajnko@blocksi.net', 'PesniKusa1')
     sleep(2)
@@ -559,6 +589,7 @@ def test_editBlockAllowListDeleteURL(test_setup):
     driver.find_element_by_xpath(
         '/html/body/div[3]/div[2]/div/div[2]/div[2]/div[1]/input').send_keys('www.partis.si')
     sleep(0.5)
+    # appy URL
     driver.find_element_by_xpath(
         '/html/body/div[3]/div[2]/div/div[2]/div[2]/div[3]/button/a').click()
     sleep(1)
@@ -578,3 +609,72 @@ def test_editBlockAllowListDeleteURL(test_setup):
         message_success = ''
 
     assert message_success == 'Success!', f'Test failed.'
+
+
+# def test_deleteBlockAllowList(test_setup):
+    # change url from block to allow
+    logInWithGoogle('mstajnko@blocksi.net', 'Aro2krat3=6')
+    sleep(2)
+    navigateToBAList()
+    sleep(1)
+    counter = countOptionsInBAList()
+    sleep(1)
+    print(f'Number of lists is: {counter}')
+    if counter > 0:
+        emptyBAList()
+    sleep(0.5)
+    driver.find_element_by_id('newListName').send_keys('Blocksi')
+    sleep(1)
+    driver.find_element_by_id('newListBtn_v2').click()
+    sleep(1)
+    try:
+        delete_button = driver.find_element_by_xpath(
+            '/html/body/div[3]/div[2]/div/div[2]/div[2]/div/div/a[3]/i')
+        delete_button.click()
+    except NoSuchElementException:
+        delete_button = 'Delete button does not exist.'
+        print(delete_button)
+    sleep(1)
+    message_success = driver.find_element_by_xpath(
+        '/html/body/div[1]/div[2]/div/div[2]').text
+    assert message_success == 'Success!', f'Test failed.'
+
+
+def test_blockPageonChromebooK(test_setup):
+    # change url from block to allow
+    logInWithGoogle('mstajnko@blocksi.net', 'Aro2krat3=6')
+    sleep(2)
+    navigateToBAList()
+    sleep(1)
+    counter = countOptionsInBAList()
+    sleep(1)
+    print(f'Number of lists is: {counter}')
+    if counter > 0:
+        emptyBAList()
+    sleep(0.5)
+    driver.find_element_by_id('newListName').send_keys('Blocksi')
+    sleep(1)
+    driver.find_element_by_id('newListBtn_v2').click()
+    sleep(1)
+    # click on edit button
+    driver.find_element_by_xpath(
+        '/html/body/div[3]/div[2]/div/div[2]/div[2]/div/div/a[2]/i').click()
+    sleep(1)
+    # enter URL
+    driver.find_element_by_xpath(
+        '/html/body/div[3]/div[2]/div/div[2]/div[2]/div[1]/input').send_keys('www.partis.si')
+    sleep(0.5)
+    # appy URL
+    driver.find_element_by_xpath(
+        '/html/body/div[3]/div[2]/div/div[2]/div[2]/div[3]/button/a').click()
+    sleep(1)
+    try:
+        url = driver.find_element_by_xpath(
+            '/html/body/div[3]/div[2]/div/div[2]/div[3]/div')
+    except NoSuchElementException:
+        url = ''
+        print('Url was not added.')
+    print(url)
+
+    logInwithAStudent('student355@blocksicloud.net', 'august2011')
+    #assert url != '', f'Test failed.'
